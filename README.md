@@ -866,3 +866,409 @@ p99   882.0 microseconds
 The HMAC-SHA256 variation measured a combined mean of 297.7 microseconds and p99 of 652.3 microseconds.
 
 These are **synthetic local reference-code measurements**, not end-to-end device/network latency. See [`docs/VERIFIED_RESULTS.md`](docs/VERIFIED_RESULTS.md) and [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md).
+
+
+# License
+
+Copyright © 2026 Sangam Das
+Independent Inventor
+All rights reserved except as expressly provided below.
+
+---
+
+## 1. Copyright License
+
+Unless a particular file expressly states otherwise, the original copyrightable material in this repository is made available under the:
+
+**Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).**
+
+Subject to the terms of CC BY-NC 4.0, users may share and adapt the licensed material for **non-commercial purposes**, provided that appropriate attribution is given.
+
+The official CC BY-NC 4.0 license terms control in the event of any inconsistency between this notice and the Creative Commons license.
+
+---
+
+## 2. Permitted Non-Commercial Uses
+
+Subject to CC BY-NC 4.0 and the patent-rights notice below, permitted non-commercial uses may include:
+
+* personal study;
+* academic research;
+* security research;
+* standards research;
+* interoperability evaluation;
+* teaching and education;
+* technical review;
+* benchmarking;
+* reproducibility testing;
+* non-commercial experimentation;
+* citation and discussion;
+* modification for research;
+* testing alternative protocol implementations; and
+* non-commercial proof-of-concept development.
+
+The repository may therefore be read, studied, tested, reproduced, adapted, and evaluated for legitimate non-commercial research purposes in accordance with CC BY-NC 4.0.
+
+---
+
+## 3. Attribution
+
+Attribution should identify:
+
+**Sangam Das — Independent Inventor**
+
+and, where reasonably practical, identify the relevant repository, specification, Internet-Draft, publication, or associated technical work.
+
+A reasonable attribution is:
+
+> Sangam Das, “Access Is Not Egress: Precision-Bounded Location Release,” reference implementation, 2026.
+
+Modified versions should clearly indicate that modifications have been made.
+
+Attribution must not imply:
+
+* endorsement;
+* certification;
+* sponsorship;
+* partnership;
+* standards approval;
+* regulatory approval; or
+* approval by the author.
+
+---
+
+# 4. Non-Commercial Restriction
+
+The CC BY-NC 4.0 license permits use of the licensed copyright material only where the use is not primarily intended for or directed toward commercial advantage or monetary compensation.
+
+Commercial use is not granted by this repository license except where separately authorized in writing.
+
+Examples of activity that may require separate permission include incorporation of the implementation or covered technical material into:
+
+* commercial operating systems;
+* commercial mobile applications;
+* commercial AI platforms;
+* commercial SDKs;
+* commercial browsers;
+* advertising infrastructure;
+* analytics infrastructure;
+* enterprise security products;
+* telecommunications products;
+* network equipment;
+* cloud services;
+* commercial API gateways;
+* commercial data-governance products;
+* security appliances;
+* hardware products;
+* silicon implementations; or
+* other revenue-generating products or services.
+
+For avoidance of doubt, whether a particular use is “NonCommercial” is ultimately governed by the CC BY-NC 4.0 license itself.
+
+---
+
+# 5. Important Patent Rights Notice
+
+## No Patent License Is Granted
+
+**The CC BY-NC 4.0 copyright license does not grant a patent license.**
+
+Nothing in this repository, including publication of source code, documentation, schemas, test vectors, examples, diagrams, pseudocode, benchmarks, protocol objects, reference implementations, or Internet-Draft material, should be interpreted as granting an express or implied license under any patent or patent application.
+
+Certain technical concepts described or demonstrated in this repository may relate to pending patent applications associated with the **DAS Protocols** family.
+
+Accordingly:
+
+> **Permission under the copyright license to read, copy, study, modify, test, or redistribute copyrightable material does not constitute permission to practice any patent claim.**
+
+Patent rights are expressly reserved.
+
+---
+
+# 6. Commercial Implementation and Patent Licensing
+
+A commercial implementation may require a separate patent license where an applicable patent claim exists and is enforceable.
+
+No commercial patent implementation right is granted merely because:
+
+* the source code is publicly accessible;
+* the repository can be cloned;
+* the implementation can be executed;
+* test vectors are provided;
+* JSON schemas are provided;
+* technical architecture is publicly described;
+* an Internet-Draft has been published;
+* a standards discussion references the architecture; or
+* a user has complied with the copyright attribution requirements.
+
+Any commercial patent-license arrangement must be established separately.
+
+---
+
+# 7. No FRAND or Royalty-Free Commitment Created Here
+
+Nothing in this repository or this license constitutes, by itself:
+
+* a FRAND commitment;
+* a RAND commitment;
+* a royalty-free patent commitment;
+* a patent waiver;
+* a patent dedication to the public;
+* an implied patent license;
+* a covenant not to assert patents;
+* a covenant not to sue;
+* a patent exhaustion declaration;
+* a standards-essential patent declaration; or
+* a licensing commitment to any standards-development organization.
+
+Any standards-related intellectual-property disclosure or licensing commitment must be made separately through the applicable standards-development organization's procedures.
+
+---
+
+# 8. IETF and Standards Disclaimer
+
+Material in this repository may relate to Internet-Drafts, standards research, interoperability discussions, or possible future standardization work.
+
+Publication of this repository does not imply endorsement by:
+
+* the Internet Engineering Task Force (IETF);
+* the Internet Architecture Board (IAB);
+* the Internet Society;
+* the World Wide Web Consortium (W3C);
+* 3GPP;
+* O-RAN Alliance;
+* ITU;
+* IMT-2030;
+* ETSI;
+* GSMA;
+* any government;
+* any regulator;
+* any vendor; or
+* any standards-development organization.
+
+Internet-Drafts are works in progress and may change, expire, or be replaced.
+
+---
+
+# 9. Reference Implementation Status
+
+This repository contains **research and reference implementation code**.
+
+It is provided to demonstrate, test, and evaluate architectural concepts including, where applicable:
+
+* Candidate Acts;
+* Non-Effective State;
+* Protected Enforcement Domain validation;
+* protected validation evidence;
+* precision-bounded authorization;
+* scoped non-bearer finality authority;
+* Egress Finality Sink verification;
+* destination binding;
+* recipient binding;
+* jurisdiction binding;
+* policy and revocation epochs;
+* replay protection;
+* authority consumption;
+* cumulative-disclosure controls; and
+* sink-side payload verification.
+
+The repository is not represented as production-ready software.
+
+---
+
+# 10. No Security Certification
+
+Publication of this reference implementation does not constitute a representation or guarantee that the software is:
+
+* secure against every attack;
+* formally verified;
+* non-bypassable in a production operating system;
+* suitable for safety-critical systems;
+* suitable for emergency-service infrastructure;
+* suitable for regulated production environments;
+* compliant with a particular privacy law;
+* certified by a standards organization; or
+* approved for deployment on live infrastructure.
+
+The automated test suite demonstrates only the behavior covered by those tests.
+
+Passing tests are not a formal security proof.
+
+---
+
+# 11. No Legal or Regulatory Advice
+
+The repository may use concepts including:
+
+* privacy;
+* jurisdiction;
+* purpose limitation;
+* data minimization;
+* authorization;
+* processor;
+* recipient;
+* data sovereignty;
+* policy; and
+* regulatory profiles.
+
+These are used for technical architecture and research.
+
+Nothing in this repository constitutes legal, regulatory, compliance, tax, or professional advice.
+
+Implementers are responsible for determining the legal and regulatory requirements applicable to their own deployment.
+
+---
+
+# 12. No Warranty
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE MATERIAL IS PROVIDED **“AS IS”** AND **“AS AVAILABLE,”** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE.
+
+NO WARRANTY IS GIVEN REGARDING:
+
+* MERCHANTABILITY;
+* FITNESS FOR A PARTICULAR PURPOSE;
+* SECURITY;
+* RELIABILITY;
+* ACCURACY;
+* NON-INFRINGEMENT;
+* PERFORMANCE;
+* AVAILABILITY;
+* PRODUCTION READINESS; OR
+* COMPATIBILITY WITH ANY PARTICULAR SYSTEM.
+
+Use of the material is at the user's own risk.
+
+---
+
+# 13. Limitation of Liability
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE AUTHOR SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR OTHER DAMAGES ARISING FROM THE USE, MODIFICATION, DISTRIBUTION, TESTING, DEPLOYMENT, OR INABILITY TO USE THE MATERIAL.
+
+This includes, without limitation, loss arising from:
+
+* software defects;
+* security incidents;
+* privacy incidents;
+* service interruption;
+* data disclosure;
+* data loss;
+* business interruption;
+* deployment failure; or
+* reliance on experimental benchmark results.
+
+Nothing in this section overrides rights or liabilities that cannot lawfully be excluded.
+
+---
+
+# 14. Third-Party Material
+
+Third-party software, libraries, standards text, specifications, trademarks, references, or other material included in or referenced by this repository remain subject to their respective licenses and rights.
+
+This license applies only to material for which Sangam Das has authority to grant the stated copyright permissions.
+
+Third-party rights are not relicensed merely because third-party material is referenced from this repository.
+
+---
+
+# 15. Trademarks
+
+Names and marks belonging to organizations or companies referenced in documentation—including standards organizations, technology vendors, operating-system providers, cloud providers, telecommunications companies, and other third parties—remain the property of their respective owners.
+
+No trademark license is granted.
+
+References to third-party organizations are descriptive and do not imply endorsement, affiliation, sponsorship, or partnership.
+
+---
+
+# 16. Research Forks and Modified Implementations
+
+Non-commercial researchers may modify the copyrightable material in accordance with CC BY-NC 4.0.
+
+Modified implementations should clearly state that they are modified versions and should not imply that:
+
+* Sangam Das authored the modifications;
+* the modifications conform to the original architecture;
+* the modifications are secure;
+* the modifications are officially approved; or
+* the modifications are standards-compliant.
+
+---
+
+# 17. Machine Learning and AI Analysis
+
+Subject to CC BY-NC 4.0 and applicable law, the copyrightable material may be used for non-commercial activities such as:
+
+* technical indexing;
+* semantic search;
+* research-oriented AI analysis;
+* architecture comparison;
+* standards analysis;
+* citation extraction;
+* security evaluation; and
+* non-commercial machine-assisted research.
+
+Such permission does not grant any patent implementation rights.
+
+Commercial exploitation of technical implementations remains subject to the copyright and patent provisions above.
+
+---
+
+# 18. Summary
+
+```text
+COPYRIGHT:
+© 2026 Sangam Das
+
+COPYRIGHT LICENSE:
+CC BY-NC 4.0
+
+NON-COMMERCIAL RESEARCH:
+Permitted subject to CC BY-NC 4.0
+
+MODIFICATION:
+Permitted for non-commercial purposes under CC BY-NC 4.0
+
+ATTRIBUTION:
+Required
+
+COMMERCIAL COPYRIGHT USE:
+Not granted except by separate permission
+
+PATENT LICENSE:
+Not granted
+
+COMMERCIAL PATENT IMPLEMENTATION:
+May require separate licensing
+
+FRAND COMMITMENT:
+None created by this repository
+
+ROYALTY-FREE PATENT COMMITMENT:
+None created by this repository
+
+WARRANTY:
+None
+
+PRODUCTION CERTIFICATION:
+None
+
+STANDARDS ENDORSEMENT:
+None
+```
+
+---
+
+## License Identification
+
+**Creative Commons Attribution-NonCommercial 4.0 International**
+
+**SPDX identifier:** `CC-BY-NC-4.0`
+
+For the complete legal terms of CC BY-NC 4.0, refer to the official Creative Commons license text.
+
+---
+
+**Author:** Sangam Das
+**Status:** Independent Inventor
+**Year:** 2026
+
