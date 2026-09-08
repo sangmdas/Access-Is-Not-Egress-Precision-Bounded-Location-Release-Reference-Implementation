@@ -1,0 +1,256 @@
+{
+  "$defs": {
+    "AuthorityBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_act_digest": {
+          "title": "Candidate Act Digest",
+          "type": "string"
+        },
+        "evidence_digest": {
+          "title": "Evidence Digest",
+          "type": "string"
+        },
+        "nonce": {
+          "title": "Nonce",
+          "type": "string"
+        },
+        "sequence": {
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "policy_epoch": {
+          "title": "Policy Epoch",
+          "type": "integer"
+        },
+        "authority_epoch": {
+          "title": "Authority Epoch",
+          "type": "integer"
+        },
+        "revocation_epoch": {
+          "title": "Revocation Epoch",
+          "type": "integer"
+        },
+        "finality_sink_id": {
+          "title": "Finality Sink Id",
+          "type": "string"
+        },
+        "protected_state_reference": {
+          "title": "Protected State Reference",
+          "type": "string"
+        },
+        "activation_commitment": {
+          "title": "Activation Commitment",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_act_digest",
+        "evidence_digest",
+        "nonce",
+        "sequence",
+        "policy_epoch",
+        "authority_epoch",
+        "revocation_epoch",
+        "finality_sink_id",
+        "protected_state_reference",
+        "activation_commitment"
+      ],
+      "title": "AuthorityBinding",
+      "type": "object"
+    },
+    "AuthorityLifetime": {
+      "additionalProperties": false,
+      "properties": {
+        "issued_at": {
+          "format": "date-time",
+          "title": "Issued At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "single_use": {
+          "default": true,
+          "title": "Single Use",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "issued_at",
+        "expires_at"
+      ],
+      "title": "AuthorityLifetime",
+      "type": "object"
+    },
+    "AuthorityScope": {
+      "additionalProperties": false,
+      "properties": {
+        "data_class": {
+          "$ref": "#/$defs/DataClass"
+        },
+        "authorized_precision": {
+          "$ref": "#/$defs/Precision"
+        },
+        "permitted_fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Permitted Fields",
+          "type": "array"
+        },
+        "recipient_id": {
+          "title": "Recipient Id",
+          "type": "string"
+        },
+        "destination_id": {
+          "title": "Destination Id",
+          "type": "string"
+        },
+        "jurisdiction": {
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "retention_seconds_max": {
+          "minimum": 0,
+          "title": "Retention Seconds Max",
+          "type": "integer"
+        },
+        "transformation_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transformation Method"
+        }
+      },
+      "required": [
+        "data_class",
+        "authorized_precision",
+        "permitted_fields",
+        "recipient_id",
+        "destination_id",
+        "jurisdiction",
+        "retention_seconds_max"
+      ],
+      "title": "AuthorityScope",
+      "type": "object"
+    },
+    "DataClass": {
+      "enum": [
+        "LOCATION",
+        "MOBILITY_TRACE",
+        "PROXIMITY",
+        "SENSOR_DERIVED_LOCATION"
+      ],
+      "title": "DataClass",
+      "type": "string"
+    },
+    "Issuer": {
+      "additionalProperties": false,
+      "properties": {
+        "ped_id": {
+          "title": "Ped Id",
+          "type": "string"
+        },
+        "key_id": {
+          "title": "Key Id",
+          "type": "string"
+        },
+        "algorithm": {
+          "title": "Algorithm",
+          "type": "string"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ped_id",
+        "key_id",
+        "algorithm",
+        "signature"
+      ],
+      "title": "Issuer",
+      "type": "object"
+    },
+    "Precision": {
+      "enum": [
+        "EXACT",
+        "METER_10",
+        "METER_100",
+        "GRID",
+        "GEOHASH",
+        "CITY",
+        "REGION",
+        "COUNTRY",
+        "NONE"
+      ],
+      "title": "Precision",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "object_type": {
+      "const": "egress_finality_authority",
+      "default": "egress_finality_authority",
+      "title": "Object Type",
+      "type": "string"
+    },
+    "authority_id": {
+      "title": "Authority Id",
+      "type": "string"
+    },
+    "candidate_act_id": {
+      "title": "Candidate Act Id",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "evidence_id": {
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/AuthorityScope"
+    },
+    "binding": {
+      "$ref": "#/$defs/AuthorityBinding"
+    },
+    "lifetime": {
+      "$ref": "#/$defs/AuthorityLifetime"
+    },
+    "issuer": {
+      "$ref": "#/$defs/Issuer"
+    }
+  },
+  "required": [
+    "authority_id",
+    "candidate_act_id",
+    "decision_id",
+    "evidence_id",
+    "scope",
+    "binding",
+    "lifetime",
+    "issuer"
+  ],
+  "title": "EgressFinalityAuthority",
+  "type": "object"
+}

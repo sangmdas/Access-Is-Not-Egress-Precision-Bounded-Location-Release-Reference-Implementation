@@ -1,0 +1,107 @@
+{
+  "scenario": "high-cumulative",
+  "policy_decision": {
+    "version": "1.0",
+    "object_type": "precision_policy_decision",
+    "decision_id": "ppd-2d7c9e1505bbb0f6",
+    "candidate_act_id": "loc-b434293f60e93c8af08fc0ab",
+    "decision": "ALLOW_WITH_TRANSFORMATION",
+    "requested_precision": "EXACT",
+    "authorized_precision": "REGION",
+    "transformation": {
+      "type": "PRECISION_REDUCTION",
+      "method": "REGION_LABEL",
+      "parameters": {}
+    },
+    "validated_predicates": {
+      "application_valid": true,
+      "component_valid": true,
+      "purpose_valid": true,
+      "destination_valid": true,
+      "recipient_valid": true,
+      "jurisdiction_valid": true,
+      "user_authorization_valid": true,
+      "policy_epoch_valid": true,
+      "revocation_state_valid": true,
+      "cumulative_disclosure_acceptable": true,
+      "sink_binding_valid": true
+    },
+    "reason_codes": [
+      "CUMULATIVE_DISCLOSURE_DOWNGRADE",
+      "MINIMIZATION_REQUIRED",
+      "REQUESTED_PRECISION_EXCEEDS_NECESSITY"
+    ]
+  },
+  "authority": {
+    "version": "1.0",
+    "object_type": "egress_finality_authority",
+    "authority_id": "efa-3a23c274186767fc",
+    "candidate_act_id": "loc-b434293f60e93c8af08fc0ab",
+    "decision_id": "ppd-2d7c9e1505bbb0f6",
+    "evidence_id": "pve-location-7777488fbbd58a16",
+    "scope": {
+      "data_class": "LOCATION",
+      "authorized_precision": "REGION",
+      "permitted_fields": [
+        "region",
+        "country"
+      ],
+      "recipient_id": "service-provider",
+      "destination_id": "service.example",
+      "jurisdiction": "IN",
+      "retention_seconds_max": 3600,
+      "transformation_method": "REGION_LABEL"
+    },
+    "binding": {
+      "candidate_act_digest": "yIGEtUK-IIC_JrFAF9ZsZNW4Nqywsf2_6SyvLwuHhMQ",
+      "evidence_digest": "CXNBMjcIFOHlwcmY487ZLr_NvHv8BAZJeGKVBRd3D_I",
+      "nonce": "838eacd3964a878c49eacf46a0794114",
+      "sequence": 1,
+      "policy_epoch": 42,
+      "authority_epoch": 11,
+      "revocation_epoch": 7,
+      "finality_sink_id": "egress-sink-01",
+      "protected_state_reference": "ped-location-state-acc98384e81f13c5",
+      "activation_commitment": "uGBHj9Ph0gnbQt9aS-IZGb7l-DuYNQLCTkWHtQsqLoI"
+    },
+    "lifetime": {
+      "issued_at": "2026-09-08T11:07:24.229242Z",
+      "expires_at": "2026-09-08T11:07:34.229242Z",
+      "single_use": true
+    },
+    "issuer": {
+      "ped_id": "ped-device-01",
+      "key_id": "ped-ed25519-1",
+      "algorithm": "Ed25519",
+      "signature": "0GtXYpkRYAZTM2F7DKn7jkBQ_lcmnxCJ_vCppj4Z91y2lcVyKhStDe4Di_Cvd2EB9eCEjRMR22SumZbve8EjDg"
+    }
+  },
+  "payload": {
+    "region": "Odisha",
+    "country": "IN"
+  },
+  "sink_result": {
+    "operation": "EgressSinkVerify",
+    "request_id": "egress-94347b57a428e8c1",
+    "decision": "ALLOW",
+    "verification": {
+      "authority_signature": "VALID",
+      "candidate_act_binding": "MATCH",
+      "protected_evidence": "MATCH",
+      "activation_state": "ACTIVE",
+      "epochs": "CURRENT",
+      "sink_binding": "MATCH",
+      "nonce": "FRESH",
+      "destination": "MATCH",
+      "jurisdiction": "MATCH",
+      "payload_precision": "REGION_WITHIN_REGION",
+      "consumption_state": "CONSUMED"
+    },
+    "authority_id": "efa-3a23c274186767fc",
+    "consumed": true,
+    "released_precision": "REGION",
+    "release_id": "release-ccb22cbfc474a7be",
+    "error_code": null,
+    "error_message": null
+  }
+}

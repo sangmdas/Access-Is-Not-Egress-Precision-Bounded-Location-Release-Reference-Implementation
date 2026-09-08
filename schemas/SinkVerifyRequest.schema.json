@@ -1,0 +1,252 @@
+{
+  "$defs": {
+    "DataClass": {
+      "enum": [
+        "LOCATION",
+        "MOBILITY_TRACE",
+        "PROXIMITY",
+        "SENSOR_DERIVED_LOCATION"
+      ],
+      "title": "DataClass",
+      "type": "string"
+    },
+    "Destination": {
+      "additionalProperties": false,
+      "properties": {
+        "destination_id": {
+          "title": "Destination Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpoint"
+        },
+        "recipient_id": {
+          "title": "Recipient Id",
+          "type": "string"
+        },
+        "processor_type": {
+          "$ref": "#/$defs/ProcessorType",
+          "default": "OTHER"
+        },
+        "jurisdiction": {
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "cloud_region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cloud Region"
+        }
+      },
+      "required": [
+        "destination_id",
+        "recipient_id",
+        "jurisdiction"
+      ],
+      "title": "Destination",
+      "type": "object"
+    },
+    "Freshness": {
+      "additionalProperties": false,
+      "properties": {
+        "nonce": {
+          "minLength": 16,
+          "title": "Nonce",
+          "type": "string"
+        },
+        "sequence": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        }
+      },
+      "required": [
+        "nonce"
+      ],
+      "title": "Freshness",
+      "type": "object"
+    },
+    "OutboundPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "content_type": {
+          "default": "application/json",
+          "title": "Content Type",
+          "type": "string"
+        },
+        "data_class": {
+          "$ref": "#/$defs/DataClass",
+          "default": "LOCATION"
+        },
+        "declared_precision": {
+          "$ref": "#/$defs/Precision"
+        },
+        "fields": {
+          "additionalProperties": true,
+          "title": "Fields",
+          "type": "object"
+        },
+        "headers": {
+          "additionalProperties": true,
+          "title": "Headers",
+          "type": "object"
+        },
+        "payload_digest": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Payload Digest"
+        }
+      },
+      "required": [
+        "declared_precision",
+        "fields"
+      ],
+      "title": "OutboundPayload",
+      "type": "object"
+    },
+    "Precision": {
+      "enum": [
+        "EXACT",
+        "METER_10",
+        "METER_100",
+        "GRID",
+        "GEOHASH",
+        "CITY",
+        "REGION",
+        "COUNTRY",
+        "NONE"
+      ],
+      "title": "Precision",
+      "type": "string"
+    },
+    "ProcessorType": {
+      "enum": [
+        "FIRST_PARTY",
+        "PROCESSOR",
+        "SDK_VENDOR",
+        "AI_PROVIDER",
+        "ANALYTICS",
+        "AD_NETWORK",
+        "PUBLIC_AUTHORITY",
+        "OTHER"
+      ],
+      "title": "ProcessorType",
+      "type": "string"
+    },
+    "SinkRef": {
+      "additionalProperties": false,
+      "properties": {
+        "sink_id": {
+          "title": "Sink Id",
+          "type": "string"
+        },
+        "sink_type": {
+          "$ref": "#/$defs/SinkType"
+        }
+      },
+      "required": [
+        "sink_id",
+        "sink_type"
+      ],
+      "title": "SinkRef",
+      "type": "object"
+    },
+    "SinkType": {
+      "enum": [
+        "NETWORK_EGRESS",
+        "OS_DATA_BROKER",
+        "BROWSER_UPLOAD",
+        "API_GATEWAY",
+        "CLOUD_SYNC",
+        "TELEMETRY",
+        "ANALYTICS_SDK",
+        "AD_SDK",
+        "FILE_EXPORT",
+        "DATABASE_EXPORT",
+        "OTHER"
+      ],
+      "title": "SinkType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "operation": {
+      "const": "EgressSinkVerify",
+      "default": "EgressSinkVerify",
+      "title": "Operation",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "candidate_act_id": {
+      "title": "Candidate Act Id",
+      "type": "string"
+    },
+    "authority_id": {
+      "title": "Authority Id",
+      "type": "string"
+    },
+    "sink": {
+      "$ref": "#/$defs/SinkRef"
+    },
+    "outbound_payload": {
+      "$ref": "#/$defs/OutboundPayload"
+    },
+    "destination": {
+      "$ref": "#/$defs/Destination"
+    },
+    "freshness": {
+      "$ref": "#/$defs/Freshness"
+    }
+  },
+  "required": [
+    "request_id",
+    "candidate_act_id",
+    "authority_id",
+    "sink",
+    "outbound_payload",
+    "destination",
+    "freshness"
+  ],
+  "title": "SinkVerifyRequest",
+  "type": "object"
+}

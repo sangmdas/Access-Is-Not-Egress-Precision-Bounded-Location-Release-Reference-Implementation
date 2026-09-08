@@ -1,0 +1,29 @@
+{
+  "scenario": "advertising",
+  "policy_decision": {
+    "version": "1.0",
+    "object_type": "precision_policy_decision",
+    "decision_id": "ppd-5fc61419ccd4e84b",
+    "candidate_act_id": "loc-8b2dc21e6ad89bedb74c989f",
+    "decision": "DENY",
+    "requested_precision": "EXACT",
+    "authorized_precision": "NONE",
+    "transformation": null,
+    "validated_predicates": {
+      "application_valid": true,
+      "component_valid": true,
+      "purpose_valid": false,
+      "destination_valid": true,
+      "recipient_valid": true,
+      "jurisdiction_valid": true,
+      "user_authorization_valid": true,
+      "policy_epoch_valid": true,
+      "revocation_state_valid": true,
+      "cumulative_disclosure_acceptable": false,
+      "sink_binding_valid": true
+    },
+    "reason_codes": [
+      "NO_EGRESS_AUTHORIZED"
+    ]
+  }
+}

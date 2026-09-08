@@ -1,0 +1,108 @@
+{
+  "scenario": "pharmacy",
+  "policy_decision": {
+    "version": "1.0",
+    "object_type": "precision_policy_decision",
+    "decision_id": "ppd-fa7945f6fcdd4514",
+    "candidate_act_id": "loc-e487471ce88923fa500c00b0",
+    "decision": "ALLOW_WITH_TRANSFORMATION",
+    "requested_precision": "EXACT",
+    "authorized_precision": "CITY",
+    "transformation": {
+      "type": "PRECISION_REDUCTION",
+      "method": "CITY_LABEL",
+      "parameters": {}
+    },
+    "validated_predicates": {
+      "application_valid": true,
+      "component_valid": true,
+      "purpose_valid": true,
+      "destination_valid": true,
+      "recipient_valid": true,
+      "jurisdiction_valid": true,
+      "user_authorization_valid": true,
+      "policy_epoch_valid": true,
+      "revocation_state_valid": true,
+      "cumulative_disclosure_acceptable": true,
+      "sink_binding_valid": true
+    },
+    "reason_codes": [
+      "MINIMIZATION_REQUIRED",
+      "REQUESTED_PRECISION_EXCEEDS_NECESSITY"
+    ]
+  },
+  "authority": {
+    "version": "1.0",
+    "object_type": "egress_finality_authority",
+    "authority_id": "efa-7655edeb6c381703",
+    "candidate_act_id": "loc-e487471ce88923fa500c00b0",
+    "decision_id": "ppd-fa7945f6fcdd4514",
+    "evidence_id": "pve-location-95b4d9384c528c62",
+    "scope": {
+      "data_class": "LOCATION",
+      "authorized_precision": "CITY",
+      "permitted_fields": [
+        "city",
+        "region",
+        "country"
+      ],
+      "recipient_id": "service-provider",
+      "destination_id": "service.example",
+      "jurisdiction": "IN",
+      "retention_seconds_max": 3600,
+      "transformation_method": "CITY_LABEL"
+    },
+    "binding": {
+      "candidate_act_digest": "rQLCCzLK-Pd-fF8iDt0ACXeIzKuLi1cKI65zoZylgJc",
+      "evidence_digest": "Eo6k-6PXFStBzTPTOXKEBTU8uv5KYiALttfwHKk7_Yc",
+      "nonce": "8b3fb14e75a56375e1f001ef04aa4257",
+      "sequence": 1,
+      "policy_epoch": 42,
+      "authority_epoch": 11,
+      "revocation_epoch": 7,
+      "finality_sink_id": "egress-sink-01",
+      "protected_state_reference": "ped-location-state-8a6aa03cea532788",
+      "activation_commitment": "0qYEhrj0I9F4NE8m_lxqno9pC4ZEla6AqomLO0r0bz0"
+    },
+    "lifetime": {
+      "issued_at": "2026-09-08T11:07:24.225737Z",
+      "expires_at": "2026-09-08T11:07:34.225737Z",
+      "single_use": true
+    },
+    "issuer": {
+      "ped_id": "ped-device-01",
+      "key_id": "ped-ed25519-1",
+      "algorithm": "Ed25519",
+      "signature": "mMhPLCHkyLQAamJSNHIiX3T3ndeQL10Y4nFSWBe62Lf1P8PLQioiGoQonm5DmHaqh0Gs8TSPT7pyfU_7qbavBQ"
+    }
+  },
+  "payload": {
+    "city": "Balasore",
+    "region": "Odisha",
+    "country": "IN"
+  },
+  "sink_result": {
+    "operation": "EgressSinkVerify",
+    "request_id": "egress-ef4d273a085fbc2d",
+    "decision": "ALLOW",
+    "verification": {
+      "authority_signature": "VALID",
+      "candidate_act_binding": "MATCH",
+      "protected_evidence": "MATCH",
+      "activation_state": "ACTIVE",
+      "epochs": "CURRENT",
+      "sink_binding": "MATCH",
+      "nonce": "FRESH",
+      "destination": "MATCH",
+      "jurisdiction": "MATCH",
+      "payload_precision": "CITY_WITHIN_CITY",
+      "consumption_state": "CONSUMED"
+    },
+    "authority_id": "efa-7655edeb6c381703",
+    "consumed": true,
+    "released_precision": "CITY",
+    "release_id": "release-6266885c923b33b8",
+    "error_code": null,
+    "error_message": null
+  }
+}

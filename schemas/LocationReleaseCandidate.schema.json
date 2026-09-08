@@ -1,0 +1,503 @@
+{
+  "$defs": {
+    "ComponentType": {
+      "enum": [
+        "APPLICATION",
+        "SDK",
+        "AI_AGENT",
+        "ANALYTICS",
+        "ADVERTISING",
+        "BROWSER",
+        "CLOUD_SERVICE",
+        "SYSTEM_SERVICE",
+        "OTHER"
+      ],
+      "title": "ComponentType",
+      "type": "string"
+    },
+    "CumulativeDisclosure": {
+      "additionalProperties": false,
+      "properties": {
+        "window_seconds": {
+          "default": 86400,
+          "minimum": 0,
+          "title": "Window Seconds",
+          "type": "integer"
+        },
+        "prior_release_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Prior Release Count",
+          "type": "integer"
+        },
+        "prior_precision_max": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Precision"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "distinct_destinations": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Distinct Destinations",
+          "type": "integer"
+        },
+        "movement_history_risk": {
+          "$ref": "#/$defs/Risk",
+          "default": "LOW"
+        },
+        "subject_scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Scope"
+        }
+      },
+      "title": "CumulativeDisclosure",
+      "type": "object"
+    },
+    "DataClass": {
+      "enum": [
+        "LOCATION",
+        "MOBILITY_TRACE",
+        "PROXIMITY",
+        "SENSOR_DERIVED_LOCATION"
+      ],
+      "title": "DataClass",
+      "type": "string"
+    },
+    "Destination": {
+      "additionalProperties": false,
+      "properties": {
+        "destination_id": {
+          "title": "Destination Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpoint"
+        },
+        "recipient_id": {
+          "title": "Recipient Id",
+          "type": "string"
+        },
+        "processor_type": {
+          "$ref": "#/$defs/ProcessorType",
+          "default": "OTHER"
+        },
+        "jurisdiction": {
+          "title": "Jurisdiction",
+          "type": "string"
+        },
+        "cloud_region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cloud Region"
+        }
+      },
+      "required": [
+        "destination_id",
+        "recipient_id",
+        "jurisdiction"
+      ],
+      "title": "Destination",
+      "type": "object"
+    },
+    "Freshness": {
+      "additionalProperties": false,
+      "properties": {
+        "nonce": {
+          "minLength": 16,
+          "title": "Nonce",
+          "type": "string"
+        },
+        "sequence": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        }
+      },
+      "required": [
+        "nonce"
+      ],
+      "title": "Freshness",
+      "type": "object"
+    },
+    "PolicyState": {
+      "additionalProperties": false,
+      "properties": {
+        "policy_epoch": {
+          "minimum": 0,
+          "title": "Policy Epoch",
+          "type": "integer"
+        },
+        "authority_epoch": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Authority Epoch",
+          "type": "integer"
+        },
+        "revocation_epoch": {
+          "minimum": 0,
+          "title": "Revocation Epoch",
+          "type": "integer"
+        },
+        "policy_profile_id": {
+          "default": "reference-v1",
+          "title": "Policy Profile Id",
+          "type": "string"
+        },
+        "regulatory_profile_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Regulatory Profile Id"
+        }
+      },
+      "required": [
+        "policy_epoch",
+        "revocation_epoch"
+      ],
+      "title": "PolicyState",
+      "type": "object"
+    },
+    "Precision": {
+      "enum": [
+        "EXACT",
+        "METER_10",
+        "METER_100",
+        "GRID",
+        "GEOHASH",
+        "CITY",
+        "REGION",
+        "COUNTRY",
+        "NONE"
+      ],
+      "title": "Precision",
+      "type": "string"
+    },
+    "ProcessorType": {
+      "enum": [
+        "FIRST_PARTY",
+        "PROCESSOR",
+        "SDK_VENDOR",
+        "AI_PROVIDER",
+        "ANALYTICS",
+        "AD_NETWORK",
+        "PUBLIC_AUTHORITY",
+        "OTHER"
+      ],
+      "title": "ProcessorType",
+      "type": "string"
+    },
+    "Purpose": {
+      "additionalProperties": false,
+      "properties": {
+        "purpose_id": {
+          "title": "Purpose Id",
+          "type": "string"
+        },
+        "declared_purpose": {
+          "title": "Declared Purpose",
+          "type": "string"
+        },
+        "purpose_epoch": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Purpose Epoch",
+          "type": "integer"
+        },
+        "user_intent_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Intent Reference"
+        }
+      },
+      "required": [
+        "purpose_id",
+        "declared_purpose"
+      ],
+      "title": "Purpose",
+      "type": "object"
+    },
+    "RequestedRelease": {
+      "additionalProperties": false,
+      "properties": {
+        "requested_precision": {
+          "$ref": "#/$defs/Precision"
+        },
+        "fields": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "retention_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Retention Seconds",
+          "type": "integer"
+        },
+        "continuous": {
+          "default": false,
+          "title": "Continuous",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "requested_precision",
+        "fields"
+      ],
+      "title": "RequestedRelease",
+      "type": "object"
+    },
+    "Requester": {
+      "additionalProperties": false,
+      "properties": {
+        "application_id": {
+          "title": "Application Id",
+          "type": "string"
+        },
+        "component_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Id"
+        },
+        "component_type": {
+          "$ref": "#/$defs/ComponentType",
+          "default": "APPLICATION"
+        }
+      },
+      "required": [
+        "application_id"
+      ],
+      "title": "Requester",
+      "type": "object"
+    },
+    "Risk": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ],
+      "title": "Risk",
+      "type": "string"
+    },
+    "SinkRef": {
+      "additionalProperties": false,
+      "properties": {
+        "sink_id": {
+          "title": "Sink Id",
+          "type": "string"
+        },
+        "sink_type": {
+          "$ref": "#/$defs/SinkType"
+        }
+      },
+      "required": [
+        "sink_id",
+        "sink_type"
+      ],
+      "title": "SinkRef",
+      "type": "object"
+    },
+    "SinkType": {
+      "enum": [
+        "NETWORK_EGRESS",
+        "OS_DATA_BROKER",
+        "BROWSER_UPLOAD",
+        "API_GATEWAY",
+        "CLOUD_SYNC",
+        "TELEMETRY",
+        "ANALYTICS_SDK",
+        "AD_SDK",
+        "FILE_EXPORT",
+        "DATABASE_EXPORT",
+        "OTHER"
+      ],
+      "title": "SinkType",
+      "type": "string"
+    },
+    "SourceData": {
+      "additionalProperties": false,
+      "properties": {
+        "data_class": {
+          "$ref": "#/$defs/DataClass",
+          "default": "LOCATION"
+        },
+        "available_precision": {
+          "$ref": "#/$defs/Precision"
+        },
+        "local_only": {
+          "default": true,
+          "title": "Local Only",
+          "type": "boolean"
+        },
+        "source_reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Reference"
+        }
+      },
+      "required": [
+        "available_precision"
+      ],
+      "title": "SourceData",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "object_type": {
+      "const": "location_release_candidate",
+      "default": "location_release_candidate",
+      "title": "Object Type",
+      "type": "string"
+    },
+    "candidate_act_id": {
+      "minLength": 16,
+      "title": "Candidate Act Id",
+      "type": "string"
+    },
+    "act_type": {
+      "const": "LOCATION_RELEASE",
+      "default": "LOCATION_RELEASE",
+      "title": "Act Type",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "expires_at": {
+      "format": "date-time",
+      "title": "Expires At",
+      "type": "string"
+    },
+    "requester": {
+      "$ref": "#/$defs/Requester"
+    },
+    "purpose": {
+      "$ref": "#/$defs/Purpose"
+    },
+    "source_data": {
+      "$ref": "#/$defs/SourceData"
+    },
+    "requested_release": {
+      "$ref": "#/$defs/RequestedRelease"
+    },
+    "destination": {
+      "$ref": "#/$defs/Destination"
+    },
+    "cumulative_disclosure": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CumulativeDisclosure"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "policy_state": {
+      "$ref": "#/$defs/PolicyState"
+    },
+    "freshness": {
+      "$ref": "#/$defs/Freshness"
+    },
+    "finality_sink": {
+      "$ref": "#/$defs/SinkRef"
+    }
+  },
+  "required": [
+    "candidate_act_id",
+    "created_at",
+    "expires_at",
+    "requester",
+    "purpose",
+    "source_data",
+    "requested_release",
+    "destination",
+    "policy_state",
+    "freshness",
+    "finality_sink"
+  ],
+  "title": "LocationReleaseCandidate",
+  "type": "object"
+}

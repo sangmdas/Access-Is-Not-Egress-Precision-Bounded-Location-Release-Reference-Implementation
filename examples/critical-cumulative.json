@@ -1,0 +1,29 @@
+{
+  "scenario": "critical-cumulative",
+  "policy_decision": {
+    "version": "1.0",
+    "object_type": "precision_policy_decision",
+    "decision_id": "ppd-c9f0770e4be98921",
+    "candidate_act_id": "loc-222d8f04386087c6b6a6b7d0",
+    "decision": "DENY",
+    "requested_precision": "EXACT",
+    "authorized_precision": "NONE",
+    "transformation": null,
+    "validated_predicates": {
+      "application_valid": true,
+      "component_valid": true,
+      "purpose_valid": false,
+      "destination_valid": true,
+      "recipient_valid": true,
+      "jurisdiction_valid": true,
+      "user_authorization_valid": true,
+      "policy_epoch_valid": true,
+      "revocation_state_valid": true,
+      "cumulative_disclosure_acceptable": false,
+      "sink_binding_valid": true
+    },
+    "reason_codes": [
+      "CUMULATIVE_DISCLOSURE_CRITICAL"
+    ]
+  }
+}

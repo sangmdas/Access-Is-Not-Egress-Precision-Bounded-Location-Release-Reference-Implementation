@@ -1,0 +1,1070 @@
+<?xml version='1.0' encoding='utf-8'?>
+<?xml-stylesheet type="text/xsl" href="rfc2629.xslt" ?>
+<rfc category="info" docName="draft-das-precision-bounded-egress-01"
+     ipr="trust200902" submissionType="IETF" xml:lang="en" version="3"
+     tocInclude="true" tocDepth="3" symRefs="true" sortRefs="true">
+  <front>
+    <title abbrev="Access-Not-Egress">Access Is Not Egress: Precision-Bounded Location Release</title>
+    <seriesInfo name="Internet-Draft" value="draft-das-precision-bounded-egress-01"/>
+    <author fullname="Sangam Das" initials="S." surname="Das">
+      <organization>Independent Inventor</organization>
+      <address>
+        <postal>
+          <city>Balasore</city>
+          <region>Odisha</region>
+          <code>756001</code>
+          <country>India</country>
+        </postal>
+        <email>info@sangamdas.com</email>
+      </address>
+    </author>
+    <date year="2026" month="August" day="27"/>
+    <area>Security</area>
+    <keyword>location</keyword>
+    <keyword>privacy</keyword>
+    <keyword>data minimization</keyword>
+    <keyword>egress</keyword>
+    <keyword>execution finality</keyword>
+    <abstract>
+      <t>A device may legitimately possess exact location while an
+      application, SDK, AI agent, analytics library, or foreign
+      endpoint is entitled only to a coarser representation, a delayed
+      or randomized representation, or no location at all. Operating
+      system permission to read a fix does not answer whether that
+      fix may leave the device at the requested precision.</t>
+      <t>This document defines a precision-bounded egress profile on
+      top of execution finality. A proposed release is a
+      Location-Release Candidate Act and remains non-effective while a
+      Protected Enforcement Domain evaluates purpose, requester,
+      component, recipient, destination, jurisdiction, required
+      precision, policy and revocation state, cumulative disclosure
+      state, and intended egress sink. The sink independently verifies
+      scoped non-bearer authority against the actual outbound payload
+      immediately before release.</t>
+      <t>The permitted result may be exact data, a reduced
+      representation, or denial. Data access is not data-export
+      authority. Precise GPS access is not precise GPS-release
+      authority.</t>
+    </abstract>
+  </front>
+  <middle>
+    <section anchor="intro">
+      <name>Introduction</name>
+      <t>Consider an assistant asked to find nearby pharmacies, or a
+      weather application asked for a local forecast. The device
+      already has a high-accuracy coordinate. The external service
+      does not need that coordinate. City or region is sufficient.
+      Under ordinary permission models the application that may read
+      exact GPS is also, in practice, the component that may transmit
+      it — including through an SDK, agent tool call, telemetry path,
+      or cloud sync that the user never saw as a separate
+      disclosure.</t>
+      <t>This document treats the outbound release as the
+      consequence that must be authorized. Local access may remain.
+      Exact coordinates remain non-effective for external disclosure
+      until purpose, recipient, destination, jurisdiction, precision
+      ceiling, policy epoch, and sink binding have been verified. If
+      exact precision is unnecessary, the Protected Enforcement Domain
+      issues authority only for a coarser representation. If the
+      application later places exact latitude and longitude on the
+      wire, the egress Finality Sink detects a precision mismatch and
+      the release stays non-effective.</t>
+      <t>The profile uses the two-boundary execution-finality chain
+      defined for AI-native network control in
+      <xref target="I-D.das-6g-finality"/> and discussed for general
+      AI interoperability in <xref target="I-D.das-ef-interop"/>:
+      Candidate Act, Non-Effective State, Protected Enforcement
+      Domain, protected validation evidence, scoped non-bearer
+      finality authority, and independent Finality Sink verification.
+      This document specifies only the location- and data-egress
+      predicates, the precision ladder, cumulative-disclosure
+      handling, and the JSON objects for that profile.</t>
+    </section>
+
+    <section anchor="rfc2119">
+      <name>Requirements Language</name>
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+      "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+      RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+      interpreted as described in BCP 14 <xref target="RFC2119"/>
+      <xref target="RFC8174"/> when, and only when, they appear in all
+      capitals, as shown here.</t>
+      <t>Failure to establish current finality authority MUST NOT be
+      converted into permission to release protected location or
+      other sensitive data.</t>
+    </section>
+
+    <section anchor="terminology">
+      <name>Terminology</name>
+      <dl newline="true">
+        <dt>Location-Release Candidate Act</dt>
+        <dd>A Candidate Act whose intended consequence is external
+        disclosure of location or a location-derived signal,
+        including exact coordinates, a mobility trace, proximity, or
+        sensor-derived location.</dd>
+        <dt>Available precision</dt>
+        <dd>The finest representation the local environment currently
+        holds. Available precision MUST NOT by itself authorize
+        release at that precision.</dd>
+        <dt>Authorized precision</dt>
+        <dd>The coarsest-or-equal representation permitted to become
+        externally effective for a particular act. The Finality Sink
+        MUST treat authorized precision as a ceiling on the outbound
+        payload.</dd>
+        <dt>Precision transformation</dt>
+        <dd>A PED-directed reduction of available data to the
+        authorized representation before or at the sink, for example
+        city label, grid cell, shortened geohash, delay, or
+        randomization.</dd>
+        <dt>Egress Finality Sink</dt>
+        <dd>The first boundary at which the location representation
+        would leave the protected environment. Depending on
+        deployment this MAY be an OS data broker, network egress
+        filter, browser upload control, API gateway, enterprise agent,
+        or equivalent. A component is a sink only if the release is
+        technically non-completable without successful
+        verification.</dd>
+        <dt>Cumulative disclosure state</dt>
+        <dd>Protected state describing prior releases in a policy
+        window, used to decide whether another individually
+        acceptable release would create an unauthorized movement
+        history or equivalent exposure.</dd>
+      </dl>
+      <t>Candidate Act, Non-Effective State, Protected Enforcement
+      Domain (PED), Protected Validation Evidence, scoped non-bearer
+      finality authority, and Finality Sink are used as in
+      <xref target="I-D.das-6g-finality"/>.</t>
+    </section>
+
+    <section anchor="problem">
+      <name>Problem Scope</name>
+      <t>Mobile operating systems commonly frame location as an
+      application permission: may application A read the user's
+      location. The release question is narrower and later. May
+      application A, or one of its SDKs, agents, analytics
+      components, tools, or external processors, emit this precision
+      to recipient B, for purpose C, in jurisdiction D, at time E,
+      given prior releases F.</t>
+      <t>Those questions are not equivalent. An application can have
+      a legitimate local need for a precise fix — navigation, E911,
+      on-device geofencing — while no external weather, advertising,
+      or model-inference endpoint has a corresponding need. ENISA
+      mobile-privacy guidance already states that an application
+      should not store an exact location point where a generic area
+      is sufficient <xref target="ENISA-MOBILE"/>. European
+      data-protection guidance treats the same idea as data
+      minimisation and protection by default
+      <xref target="GDPR-MIN"/>.</t>
+      <t>Aggregation changes the risk further. Individually ordinary
+      coordinates, timestamps, and routes can reveal workplaces,
+      routines, relationships, or activity around sensitive sites
+      once correlated at machine scale. Publicly reported
+      fitness-tracking heatmaps around military installations
+      illustrated that user permission for a benign purpose did not
+      eliminate the downstream intelligence consequence
+      <xref target="NATO-STRATCOM"/>. This document does not treat
+      that class of harm as a reason to ban location. It treats it as
+      a reason not to make the finest available representation the
+      default egress object.</t>
+      <t>AI changes the economics, not the geometry, of that
+      inference. Clustering, mobility analysis, and multisource
+      fusion that once required specialist effort can run
+      continuously over large datasets. The security significance of
+      a disclosure therefore depends on what the value enables a
+      downstream machine to infer, not only on whether a single
+      record looks sensitive in isolation.</t>
+    </section>
+
+    <section anchor="related">
+      <name>Relationship to Existing Mechanisms</name>
+      <t>This profile is intended to consume decisions from existing
+      permission, consent, and policy systems. Those systems remain
+      inputs. They do not replace sink verification of the outbound
+      payload.</t>
+      <section>
+        <name>Operating-System Location Permissions</name>
+        <t>Current mobile platforms distinguish, to varying degrees,
+        approximate and precise location, one-time and continuous
+        access, and foreground versus background access. Those
+        controls govern whether an application process may read a
+        provider. They typically do not bind a particular outbound
+        payload, recipient, jurisdiction, or precision ceiling at the
+        moment of network egress, and they often do not distinguish
+        the first-party application from an embedded SDK on the same
+        release path.</t>
+      </section>
+      <section>
+        <name>W3C Geolocation and Permission Policy</name>
+        <t>The W3C Geolocation API and related permission policy give
+        a web origin a location reading after user permission
+        <xref target="W3C-GEO"/>. They do not, by themselves, inspect
+        a later fetch, beacon, or agent tool call that forwards that
+        reading at full precision to a third party.</t>
+      </section>
+      <section>
+        <name>Coarsening, Fuzzing, and Differential Privacy</name>
+        <t>Geohash prefixes, grid snapping, geo-fuzzing, delay, and
+        differential-privacy mechanisms are compatible with this
+        profile. They are candidate transformation methods. This
+        document does not select one transformation. It requires that
+        whatever representation is actually sent is the representation
+        bound to the authority, and that a finer representation MUST
+        NOT pass the sink under that authority.</t>
+      </section>
+      <section>
+        <name>Path-Level Privacy Controls</name>
+        <t>Oblivious endpoints, MASQUE-based proxying, and private
+        relay services can hide the client's network location from a
+        destination <xref target="RFC9298"/>. They do not bind the
+        precision of application payload fields that already contain
+        coordinates. Path privacy and payload-precision finality are
+        complementary.</t>
+      </section>
+      <section>
+        <name>What This Profile Adds</name>
+        <ul>
+          <li>precision as an authorization dimension, not only as a
+          provider configuration;</li>
+          <li>component identity (application versus SDK, agent,
+          analytics, or advertising library) as a predicate;</li>
+          <li>recipient, destination, and jurisdiction bindings on
+          the release;</li>
+          <li>optional cumulative-disclosure evaluation;</li>
+          <li>sink-side comparison of authorized precision with the
+          actual outbound payload; and</li>
+          <li>fail-closed denial or mandatory downgrade rather than
+          advisory minimisation.</li>
+        </ul>
+      </section>
+    </section>
+
+    <section anchor="architecture">
+      <name>Architecture</name>
+      <t>A Location-Release Candidate Act MUST NOT become
+      externally effective merely because location permission was
+      granted, the coordinate was already computed, an AI component
+      selected a tool, or an upstream policy engine returned
+      ALLOW.</t>
+      <t>The act MUST remain in a Non-Effective State until the PED
+      validates act-specific predicates, protected validation
+      evidence is committed, scoped non-bearer finality authority is
+      released, the egress Finality Sink independently verifies that
+      authority against the outbound payload, and the authority is
+      consumed or otherwise made unsuitable for unauthorized
+      replay.</t>
+      <figure>
+        <name>Precision-bounded egress chain</name>
+        <artwork><![CDATA[
+local exact location remains inside protected domain
+                    |
+                    v
+     LOCATION-RELEASE CANDIDATE ACT
+                    |
+                    v
+            Non-Effective State
+                    |
+                    v
+     Protected Enforcement Domain
+        purpose, requester, component
+        recipient, destination, jurisdiction
+        required precision, user authorization
+        policy/revocation epochs
+        cumulative disclosure, sink identity
+                    |
+                    v
+     protected evidence + scoped authority
+                    |
+                    v
+           Egress Finality Sink
+                    |
+     +-- exact representation permitted
+     +-- transformed representation permitted
+     `-- release denied
+]]></artwork>
+      </figure>
+      <t>PED approval alone MUST NOT release data. The sink MUST
+      prevent effectuation on verification failure. A warning or
+      audit record is not sufficient.</t>
+    </section>
+
+    <section anchor="profile">
+      <name>Precision-Bounded Egress Profile</name>
+      <section>
+        <name>Precision Ladder</name>
+        <t>Implementations SHOULD be able to distinguish at least the
+        following authorized-precision classes:</t>
+        <ul>
+          <li>EXACT</li>
+          <li>METER_10</li>
+          <li>METER_100</li>
+          <li>GRID</li>
+          <li>GEOHASH</li>
+          <li>CITY</li>
+          <li>REGION</li>
+          <li>COUNTRY</li>
+          <li>DELAYED or RANDOMIZED variants of the above</li>
+          <li>NONE</li>
+        </ul>
+        <t>The applicable class MUST be determined by declared
+        purpose and current authorization state, not by the mere fact
+        that the requester asked for the finest available value. Where
+        a lower-precision representation is sufficient, the
+        higher-precision representation SHOULD remain non-effective
+        for egress.</t>
+      </section>
+      <section>
+        <name>PED Predicates</name>
+        <t>For a location-release act the PED SHOULD evaluate:</t>
+        <ul>
+          <li>requesting application and component identity and
+          type;</li>
+          <li>declared purpose and whether exact precision is
+          necessary for that purpose;</li>
+          <li>recipient, destination, processor type, and
+          jurisdiction;</li>
+          <li>current user authorization and policy/revocation
+          epochs;</li>
+          <li>data class and requested fields;</li>
+          <li>whether the release is one-shot or continuous; and</li>
+          <li>cumulative disclosure state where the policy requires
+          it;</li>
+          <li>intended egress sink identity.</li>
+        </ul>
+        <t>Possible PED decisions include ALLOW at the requested
+        precision, ALLOW_WITH_TRANSFORMATION at a coarser precision,
+        DELAY, RANDOMIZE, ESCALATE, or DENY. Exact GPS is not the
+        default success path.</t>
+      </section>
+      <section>
+        <name>Worked Example</name>
+        <t>Purpose: nearby pharmacy discovery or local weather.
+        Requested precision: exact GPS. Necessary precision: city or
+        local area. Destination: external discovery or forecast
+        service. Decision: exact GPS denied; coarse locality allowed.
+        The external service receives "Balasore, Odisha" rather than
+        a coordinate. The application can still perform the task.
+        Utility did not require unrestricted data authority.</t>
+      </section>
+      <section>
+        <name>Cumulative Disclosure</name>
+        <t>An implementation MAY incorporate cumulative disclosure
+        state so that repeated individually acceptable releases do
+        not automatically create an unauthorized movement history.
+        This state is policy-dependent and can cause a later request
+        to be downgraded, delayed, randomized, rate-limited, or
+        denied.</t>
+        <t>Cumulative disclosure state is itself sensitive.
+        Implementations SHOULD keep it device-local or inside the
+        PED, SHOULD minimise retained identifiers, SHOULD bound
+        retention to the policy window, and MUST NOT export the state
+        as a movement history under authority issued for a single
+        coarse release. A later revision may define a narrower
+        privacy-preserving accumulator. This version only requires
+        that if the state is used, it is treated as protected input
+        to the PED, not as another egress object.</t>
+      </section>
+      <section>
+        <name>Jurisdiction-Neutral Policy Input</name>
+        <t>This architecture does not choose among national privacy
+        rules. The PED consumes the policy applicable to the relevant
+        jurisdiction and user or enterprise authorization state.
+        United States, European, Indian, or other deployments MAY
+        produce different authorized-precision decisions from the
+        same Candidate Act. The protocol's role is to keep the
+        selected policy technically binding at the point of
+        release.</t>
+      </section>
+      <section>
+        <name>Sink Placement and Alternate Paths</name>
+        <t>Possible sink locations include an OS location or data
+        broker, a network-egress filter, a browser upload control, an
+        API gateway, a cloud-sync agent, and enterprise wrapping of
+        SDK traffic. If more than one path can emit the same
+        protected representation — application upload, analytics SDK,
+        advertising SDK, telemetry, clipboard, file export, agent
+        tool call, background sync — each path capable of that
+        consequence MUST be subject to the same precision ceiling or
+        MUST be unable to emit the protected fields.</t>
+        <t>This document does not specify a single on-device
+        enforcement point for every operating system. An
+        implementation that leaves an equivalent path unverified does
+        not satisfy the profile for that data class.</t>
+      </section>
+    </section>
+
+    <section anchor="json-profile">
+      <name>JSON Interoperability Profile</name>
+      <t>This section defines the semantic JSON contract for
+      location-release acts. It does not require one transport.
+      Objects MAY move over protected local IPC, OS broker APIs,
+      HTTPS, or enterprise agents. A transport binding MUST preserve
+      object integrity, sink identity, freshness, and non-bearer
+      authority semantics.</t>
+
+      <section>
+        <name>LocationReleaseCandidate Object</name>
+        <sourcecode type="json"><![CDATA[
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:ietf:params:json-schema:precision-egress:location-candidate:1",
+  "title": "LocationReleaseCandidate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "object_type", "candidate_act_id", "act_type",
+    "created_at", "expires_at", "requester", "purpose",
+    "source_data", "requested_release", "destination",
+    "policy_state", "freshness", "finality_sink"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "1.0" },
+    "object_type": {
+      "type": "string",
+      "const": "location_release_candidate"
+    },
+    "candidate_act_id": { "type": "string", "minLength": 16 },
+    "act_type": { "type": "string", "const": "LOCATION_RELEASE" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "requester": {
+      "type": "object",
+      "required": ["application_id"],
+      "properties": {
+        "application_id": { "type": "string" },
+        "component_id": { "type": "string" },
+        "component_type": {
+          "type": "string",
+          "enum": [
+            "APPLICATION", "SDK", "AI_AGENT", "ANALYTICS",
+            "ADVERTISING", "BROWSER", "CLOUD_SERVICE",
+            "SYSTEM_SERVICE", "OTHER"
+          ]
+        }
+      }
+    },
+    "purpose": {
+      "type": "object",
+      "required": ["purpose_id", "declared_purpose"],
+      "properties": {
+        "purpose_id": { "type": "string" },
+        "declared_purpose": { "type": "string" },
+        "purpose_epoch": { "type": "integer", "minimum": 0 },
+        "user_intent_reference": { "type": "string" }
+      }
+    },
+    "source_data": {
+      "type": "object",
+      "required": ["data_class", "available_precision"],
+      "properties": {
+        "data_class": {
+          "type": "string",
+          "enum": [
+            "LOCATION", "MOBILITY_TRACE",
+            "PROXIMITY", "SENSOR_DERIVED_LOCATION"
+          ]
+        },
+        "available_precision": {
+          "type": "string",
+          "enum": [
+            "EXACT", "METER_10", "METER_100", "GRID",
+            "GEOHASH", "CITY", "REGION", "COUNTRY"
+          ]
+        },
+        "local_only": { "type": "boolean" },
+        "source_reference": { "type": "string" }
+      }
+    },
+    "requested_release": {
+      "type": "object",
+      "required": ["requested_precision", "fields"],
+      "properties": {
+        "requested_precision": {
+          "type": "string",
+          "enum": [
+            "EXACT", "METER_10", "METER_100", "GRID",
+            "GEOHASH", "CITY", "REGION", "COUNTRY", "NONE"
+          ]
+        },
+        "fields": { "type": "array", "items": { "type": "string" } },
+        "retention_seconds": { "type": "integer", "minimum": 0 },
+        "continuous": { "type": "boolean" }
+      }
+    },
+    "destination": {
+      "type": "object",
+      "required": ["destination_id", "jurisdiction"],
+      "properties": {
+        "destination_id": { "type": "string" },
+        "endpoint": { "type": "string" },
+        "recipient_id": { "type": "string" },
+        "processor_type": {
+          "type": "string",
+          "enum": [
+            "FIRST_PARTY", "PROCESSOR", "SDK_VENDOR",
+            "AI_PROVIDER", "ANALYTICS", "AD_NETWORK",
+            "PUBLIC_AUTHORITY", "OTHER"
+          ]
+        },
+        "jurisdiction": { "type": "string" },
+        "cloud_region": { "type": "string" }
+      }
+    },
+    "cumulative_disclosure": {
+      "type": "object",
+      "properties": {
+        "window_seconds": { "type": "integer", "minimum": 0 },
+        "prior_release_count": { "type": "integer", "minimum": 0 },
+        "prior_precision_max": { "type": "string" },
+        "movement_history_risk": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+        }
+      }
+    },
+    "policy_state": {
+      "type": "object",
+      "required": ["policy_epoch", "revocation_epoch"],
+      "properties": {
+        "policy_epoch": { "type": "integer", "minimum": 0 },
+        "authority_epoch": { "type": "integer", "minimum": 0 },
+        "revocation_epoch": { "type": "integer", "minimum": 0 },
+        "policy_profile_id": { "type": "string" },
+        "regulatory_profile_id": { "type": "string" }
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "required": ["nonce"],
+      "properties": {
+        "nonce": { "type": "string", "minLength": 16 },
+        "sequence": { "type": "integer", "minimum": 0 },
+        "session_id": { "type": "string" }
+      }
+    },
+    "finality_sink": {
+      "type": "object",
+      "required": ["sink_id", "sink_type"],
+      "properties": {
+        "sink_id": { "type": "string" },
+        "sink_type": {
+          "type": "string",
+          "enum": [
+            "NETWORK_EGRESS", "OS_DATA_BROKER", "BROWSER_UPLOAD",
+            "API_GATEWAY", "CLOUD_SYNC", "TELEMETRY",
+            "ANALYTICS_SDK", "AD_SDK", "FILE_EXPORT",
+            "DATABASE_EXPORT", "OTHER"
+          ]
+        }
+      }
+    }
+  }
+}
+]]></sourcecode>
+      </section>
+
+      <section>
+        <name>Precision Decision Object</name>
+        <sourcecode type="json"><![CDATA[
+{
+  "version": "1.0",
+  "object_type": "precision_policy_decision",
+  "decision_id": "ppd-cf0c49",
+  "candidate_act_id": "loc-5c8238a4",
+  "decision": "ALLOW_WITH_TRANSFORMATION",
+  "requested_precision": "EXACT",
+  "authorized_precision": "CITY",
+  "transformation": {
+    "type": "PRECISION_REDUCTION",
+    "method": "CITY_LABEL",
+    "parameters": {
+      "country_code": "IN",
+      "region": "Odisha",
+      "city": "Balasore"
+    }
+  },
+  "validated_predicates": {
+    "application_valid": true,
+    "component_valid": true,
+    "purpose_valid": true,
+    "exact_precision_necessary": false,
+    "destination_valid": true,
+    "recipient_valid": true,
+    "jurisdiction_valid": true,
+    "user_authorization_valid": true,
+    "policy_epoch_valid": true,
+    "revocation_state_valid": true,
+    "cumulative_disclosure_acceptable": true,
+    "sink_binding_valid": true
+  },
+  "reason_codes": [
+    "MINIMIZATION_REQUIRED",
+    "EXACT_PRECISION_NOT_NECESSARY"
+  ]
+}
+]]></sourcecode>
+      </section>
+
+      <section>
+        <name>EgressFinalityAuthority Object</name>
+        <sourcecode type="json"><![CDATA[
+{
+  "version": "1.0",
+  "object_type": "egress_finality_authority",
+  "authority_id": "efa-e71ad531",
+  "candidate_act_id": "loc-5c8238a4",
+  "decision_id": "ppd-cf0c49",
+  "evidence_id": "pve-location-332",
+  "scope": {
+    "data_class": "LOCATION",
+    "authorized_precision": "CITY",
+    "permitted_fields": ["city", "region", "country"],
+    "recipient_id": "weather-provider",
+    "destination_id": "weather.example",
+    "jurisdiction": "IN",
+    "retention_seconds_max": 3600
+  },
+  "binding": {
+    "candidate_act_digest": {
+      "algorithm": "SHA-256",
+      "value": "base64url-location-act-digest"
+    },
+    "nonce": "B21C9924FF77A183",
+    "policy_epoch": 42,
+    "authority_epoch": 11,
+    "revocation_epoch": 7,
+    "finality_sink_id": "egress-sink-01",
+    "protected_state_reference": "ped-location-state-91"
+  },
+  "lifetime": {
+    "issued_at": "2026-08-26T17:45:01Z",
+    "expires_at": "2026-08-26T17:45:10Z",
+    "single_use": true
+  },
+  "issuer": {
+    "ped_id": "ped-device-01",
+    "key_id": "ped-key-location-2",
+    "signature": "base64url-signature"
+  }
+}
+]]></sourcecode>
+      </section>
+
+      <section>
+        <name>EgressSinkVerify Request and Response</name>
+        <t>The sink verifies the actual outbound payload immediately
+        before release. Declared precision is not sufficient. The
+        payload fields MUST be within the authorized ceiling.</t>
+        <sourcecode type="json"><![CDATA[
+{
+  "operation": "EgressSinkVerify",
+  "request_id": "egress-req-771",
+  "candidate_act_id": "loc-5c8238a4",
+  "authority_id": "efa-e71ad531",
+  "sink": {
+    "sink_id": "egress-sink-01",
+    "sink_type": "NETWORK_EGRESS"
+  },
+  "outbound_payload": {
+    "content_type": "application/json",
+    "data_class": "LOCATION",
+    "declared_precision": "CITY",
+    "fields": {
+      "city": "Balasore",
+      "region": "Odisha",
+      "country": "IN"
+    },
+    "payload_digest": {
+      "algorithm": "SHA-256",
+      "value": "base64url-payload-digest"
+    }
+  },
+  "destination": {
+    "destination_id": "weather.example",
+    "endpoint": "https://weather.example/forecast",
+    "recipient_id": "weather-provider",
+    "jurisdiction": "IN"
+  },
+  "freshness": { "nonce": "B21C9924FF77A183" }
+}
+]]></sourcecode>
+        <sourcecode type="json"><![CDATA[
+{
+  "operation": "EgressSinkVerify",
+  "request_id": "egress-req-771",
+  "decision": "ALLOW",
+  "verification": {
+    "authority_signature": "VALID",
+    "candidate_act_binding": "MATCH",
+    "data_class": "MATCH",
+    "payload_precision": "CITY_WITHIN_AUTHORIZED_CEILING",
+    "field_scope": "MATCH",
+    "recipient": "MATCH",
+    "destination": "MATCH",
+    "jurisdiction": "MATCH",
+    "policy_epoch": "CURRENT",
+    "revocation_epoch": "CURRENT",
+    "nonce": "FRESH",
+    "consumption_state": "UNUSED",
+    "sink_binding": "MATCH"
+  },
+  "consumption": {
+    "authority_id": "efa-e71ad531",
+    "status": "CONSUMED",
+    "consumed_at": "2026-08-26T17:45:02Z"
+  },
+  "release": {
+    "permitted": true,
+    "released_precision": "CITY",
+    "release_id": "release-881"
+  }
+}
+]]></sourcecode>
+      </section>
+
+      <section>
+        <name>Precision-Mismatch Denial</name>
+        <sourcecode type="json"><![CDATA[
+{
+  "operation": "EgressSinkVerify",
+  "request_id": "egress-req-772",
+  "decision": "DENY",
+  "error": {
+    "code": "EF_PRECISION_MISMATCH",
+    "message": "Outbound payload exceeds authorized precision.",
+    "retryable": false
+  },
+  "verification": {
+    "authority_signature": "VALID",
+    "authorized_precision": "CITY",
+    "observed_payload_precision": "EXACT",
+    "destination": "MATCH",
+    "jurisdiction": "MATCH",
+    "sink_binding": "MATCH"
+  },
+  "release": { "permitted": false }
+}
+]]></sourcecode>
+      </section>
+
+      <section>
+        <name>Complete Exact-to-Coarse Transaction</name>
+        <sourcecode type="json"><![CDATA[
+{
+  "step_1_local_state": {
+    "available_location": {
+      "latitude": 21.494321,
+      "longitude": 86.932145,
+      "accuracy_meters": 4.2
+    },
+    "external_effect": "NONE"
+  },
+  "step_2_candidate_act": {
+    "candidate_act_id": "loc-5c8238a4",
+    "requester": {
+      "application_id": "weather-app",
+      "component_id": "forecast-module",
+      "component_type": "APPLICATION"
+    },
+    "purpose": {
+      "purpose_id": "local-weather",
+      "declared_purpose": "Provide weather for the user's area"
+    },
+    "requested_release": {
+      "requested_precision": "EXACT",
+      "fields": ["latitude", "longitude"]
+    },
+    "destination": {
+      "destination_id": "weather.example",
+      "recipient_id": "weather-provider",
+      "jurisdiction": "IN"
+    }
+  },
+  "step_3_ped_decision": {
+    "decision": "ALLOW_WITH_TRANSFORMATION",
+    "authorized_precision": "CITY",
+    "reason": "Exact coordinates are not necessary."
+  },
+  "step_4_authorized_payload": {
+    "city": "Balasore",
+    "region": "Odisha",
+    "country": "IN"
+  },
+  "step_5_sink_verification": {
+    "decision": "ALLOW",
+    "exact_coordinates_released": false,
+    "authority_consumed": true
+  }
+}
+]]></sourcecode>
+      </section>
+
+      <section>
+        <name>Cumulative Disclosure Extension</name>
+        <sourcecode type="json"><![CDATA[
+{
+  "cumulative_disclosure": {
+    "subject_scope": "device-local-pseudonymous-subject",
+    "window_seconds": 86400,
+    "prior_release_count": 144,
+    "prior_precision_max": "METER_100",
+    "distinct_destinations": 6,
+    "movement_history_risk": "HIGH",
+    "policy_action": "DOWNGRADE_TO_REGION"
+  }
+}
+]]></sourcecode>
+      </section>
+    </section>
+
+    <section anchor="operation">
+      <name>Protocol Operation</name>
+      <section>
+        <name>Digest and Substitution</name>
+        <t>A Candidate Act SHOULD have a stable digest over
+        load-bearing attributes including data class, requested and
+        authorized precision, destination, recipient, jurisdiction,
+        purpose, permitted fields, and sink identity. Changing exact
+        GPS to city, recipient A to recipient B, or sink A to sink B
+        MUST invalidate previously issued authority unless the
+        changed operation is separately authorized.</t>
+      </section>
+      <section>
+        <name>Sink Verification</name>
+        <t>Immediately before release the sink MUST verify authority
+        integrity, act binding, sink identity, expiry and consumption
+        state, nonce freshness, policy and revocation epochs,
+        destination and jurisdiction, authorized field set, and that
+        observed payload precision does not exceed the authorized
+        ceiling. On success, single-use authority SHOULD be consumed
+        atomically with release.</t>
+        <t>Implementations SHOULD define a canonicalization for
+        payload inspection sufficient to detect exact coordinates
+        presented under a city label, hidden in additional JSON
+        fields, or duplicated on a parallel header. This version does
+        not specify a complete media-type inspection algorithm.
+        Absence of such inspection is a residual risk and MUST be
+        documented by the implementation.</t>
+      </section>
+      <section>
+        <name>Hot Path and Escalation</name>
+        <t>Repeated releases inside a previously validated envelope
+        — same application, purpose, destination, jurisdiction, and
+        precision ceiling — MAY use a hot path with local protected
+        state and short-lived authority. The hot path MUST still
+        perform sink verification. Cache miss, unknown destination,
+        jurisdiction uncertainty, continuous-trace requests, exact
+        precision, or elevated cumulative-disclosure risk SHOULD
+        escalate. Timeout MUST NOT be treated as approval.</t>
+      </section>
+      <section>
+        <name>Failure Codes</name>
+        <t>The following identifiers are design suggestions and are
+        not IANA assignments. Location-egress implementations SHOULD
+        be able to express at least:</t>
+        <ul>
+          <li>EF-002 NO_FINALITY_AUTHORITY</li>
+          <li>EF-005 AUTHORITY_ALREADY_USED</li>
+          <li>EF-006 REPLAY_DETECTED</li>
+          <li>EF-012 SCOPE_MISMATCH</li>
+          <li>EF-020 DESTINATION_MISMATCH</li>
+          <li>EF-021 JURISDICTION_MISMATCH</li>
+          <li>EF-023 PRECISION_MISMATCH</li>
+          <li>EF-030 POLICY_EPOCH_MISMATCH</li>
+          <li>EF-031 REVOCATION_STATE_MISMATCH</li>
+          <li>EF-040 SINK_MISMATCH</li>
+          <li>EF-070 ESCALATION_REQUIRED</li>
+          <li>EF-080 FAIL_CLOSED</li>
+        </ul>
+        <t>A PRECISION_MISMATCH denial MAY include a remediation such
+        as DOWNGRADE_TO_CITY. Other permitted actions include deny,
+        delay, randomize, redact, quarantine, request fresh
+        authority, or escalate.</t>
+      </section>
+    </section>
+
+    <section anchor="security">
+      <name>Security Considerations</name>
+      <t>The objective is that protected location remains
+      technically non-effective for egress unless current,
+      act-specific, precision-bounded authority is verified at the
+      sink.</t>
+      <t>Replay of a previously successful authority MUST be
+      prevented by nonce, consumption, short lifetime, or equivalent
+      state. Authority for city-level weather MUST NOT authorize
+      exact GPS to the same host, a different host, or a different
+      sink.</t>
+      <t>Ordinary application-layer software MAY be compromised or
+      overly permissive. Security MUST NOT depend solely on the
+      application, SDK, browser, or model returning ALLOW. A
+      malicious SDK with valid in-process access SHOULD NOT be able
+      to bypass a correctly placed egress sink.</t>
+      <t>If PED or sink integrity cannot be established, the
+      implementation SHOULD NOT release exact or high-precision
+      location. It MAY fail closed, downgrade, quarantine, or disable
+      the protected consequence class.</t>
+    </section>
+
+    <section anchor="privacy">
+      <name>Privacy Considerations</name>
+      <t>Finality metadata can itself be sensitive: application
+      identity, purpose, destination, jurisdiction, and precision
+      class can reveal behavior even when coordinates are withheld.
+      Implementations SHOULD minimise metadata exposed outside the
+      PED and MAY use hashes, commitments, or sealed references
+      rather than raw descriptors on untrusted paths.</t>
+      <t>Repeated coarse releases can still build a movement history.
+      Authorized precision of CITY on each of 144 requests is not
+      automatically harmless. Cumulative-disclosure evaluation exists
+      for that reason and must not become a second exportable
+      trace.</t>
+      <t>On-device models that reason over exact coordinates while
+      egress is limited to city labels create an isolation
+      requirement. This document does not specify how an
+      implementation prevents the model or a tool-calling runtime
+      from emitting the exact value through another channel. That
+      channel, if it exists, is an egress path and is subject to
+      <xref target="profile"/>.</t>
+    </section>
+
+    <section anchor="sovereignty">
+      <name>Data-Sovereignty Considerations</name>
+      <t>Authority to access data inside one environment is not
+      authority to transfer it to another jurisdiction, cloud region,
+      unapproved processor, external analytics provider, unrelated AI
+      provider, or advertising endpoint. A data-export Candidate Act
+      SHOULD bind destination, recipient, jurisdiction, cloud region,
+      purpose, data class, precision, policy and revocation epochs,
+      and sink identity.</t>
+    </section>
+
+    <section anchor="iana">
+      <name>IANA Considerations</name>
+      <t>This document requests no IANA actions. The precision-class
+      names and EF-xxx identifiers are illustrative. A later revision
+      MAY propose registries for precision classes, consequence
+      classes, or error codes.</t>
+    </section>
+
+    <section anchor="ipr-note">
+      <name>Intellectual Property Note</name>
+      <t>Certain technical concepts described in this document are
+      associated with pending patent applications in the DAS
+      Protocols family, including PCT/IB2026/054453,
+      PCT/IB2026/055615, PCT/IB2026/055760, PCT/IB2026/055870,
+      PCT/IB2026/056058, and PCT/IB2026/053385. IETF IPR disclosure
+      should follow BCP 79 <xref target="RFC8179"/>. This section is
+      informational and does not define licensing terms.</t>
+    </section>
+
+    <section anchor="conclusion">
+      <name>Conclusion</name>
+      <t>A device or application may obtain exact location while an
+      SDK, AI agent, analytics service, cloud processor, or external
+      destination is entitled only to a less precise representation
+      or to no location at all. This profile moves that distinction
+      to the actual egress boundary. Precise GPS access is not
+      precise GPS-release authority.</t>
+    </section>
+  </middle>
+  <back>
+    <references>
+      <name>Normative References</name>
+      <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+        <front>
+          <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+          <author initials="S." surname="Bradner" fullname="S. Bradner"/>
+          <date year="1997" month="March"/>
+        </front>
+        <seriesInfo name="BCP" value="14"/>
+        <seriesInfo name="RFC" value="2119"/>
+        <seriesInfo name="DOI" value="10.17487/RFC2119"/>
+      </reference>
+      <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174">
+        <front>
+          <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+          <author initials="B." surname="Leiba" fullname="B. Leiba"/>
+          <date year="2017" month="May"/>
+        </front>
+        <seriesInfo name="BCP" value="14"/>
+        <seriesInfo name="RFC" value="8174"/>
+        <seriesInfo name="DOI" value="10.17487/RFC8174"/>
+      </reference>
+      <reference anchor="RFC8179" target="https://www.rfc-editor.org/info/rfc8179">
+        <front>
+          <title>Intellectual Property Rights in IETF Technology</title>
+          <author initials="S." surname="Bradner" fullname="S. Bradner"/>
+          <author initials="J." surname="Contreras" fullname="J. Contreras"/>
+          <date year="2017" month="May"/>
+        </front>
+        <seriesInfo name="BCP" value="79"/>
+        <seriesInfo name="RFC" value="8179"/>
+        <seriesInfo name="DOI" value="10.17487/RFC8179"/>
+      </reference>
+    </references>
+    <references>
+      <name>Informative References</name>
+      <reference anchor="I-D.das-6g-finality">
+        <front>
+          <title>Execution-Finality for AI-Native 5G/6G and O-RAN</title>
+          <author fullname="Sangam Das" initials="S." surname="Das"/>
+          <date year="2026" month="August"/>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-das-ai-native-6g-execution-finality-01"/>
+      </reference>
+      <reference anchor="I-D.das-ef-interop">
+        <front>
+          <title>Execution-Finality for AI Interoperability</title>
+          <author fullname="Sangam Das" initials="S." surname="Das"/>
+          <date year="2026" month="August"/>
+        </front>
+        <seriesInfo name="Internet-Draft" value="draft-das-execution-finality-ai-interoperability-00"/>
+      </reference>
+      <reference anchor="RFC9298" target="https://www.rfc-editor.org/info/rfc9298">
+        <front>
+          <title>Proxying UDP in HTTP</title>
+          <author initials="D." surname="Schinazi" fullname="D. Schinazi"/>
+          <date year="2022" month="August"/>
+        </front>
+        <seriesInfo name="RFC" value="9298"/>
+        <seriesInfo name="DOI" value="10.17487/RFC9298"/>
+      </reference>
+      <reference anchor="W3C-GEO" target="https://www.w3.org/TR/geolocation/">
+        <front>
+          <title>Geolocation</title>
+          <author>
+            <organization>W3C</organization>
+          </author>
+          <date year="2025"/>
+        </front>
+      </reference>
+      <reference anchor="ENISA-MOBILE">
+        <front>
+          <title>Privacy and data protection in mobile applications</title>
+          <author>
+            <organization>ENISA</organization>
+          </author>
+          <date year="2017"/>
+        </front>
+      </reference>
+      <reference anchor="GDPR-MIN">
+        <front>
+          <title>Principles of data protection, including data minimisation and protection by default</title>
+          <author>
+            <organization>European Commission</organization>
+          </author>
+          <date year="2018"/>
+        </front>
+        <annotation>Policy context only. This document does not specify EU law.</annotation>
+      </reference>
+      <reference anchor="NATO-STRATCOM">
+        <front>
+          <title>Work on consumer geolocation, metadata, and operationally significant inference from ordinary activity data</title>
+          <author>
+            <organization>NATO Strategic Communications Centre of Excellence</organization>
+          </author>
+          <date year="2018"/>
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>

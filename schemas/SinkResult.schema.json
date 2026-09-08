@@ -1,0 +1,118 @@
+{
+  "$defs": {
+    "Decision": {
+      "enum": [
+        "ALLOW",
+        "ALLOW_WITH_TRANSFORMATION",
+        "DELAY",
+        "RANDOMIZE",
+        "ESCALATE",
+        "DENY"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "Precision": {
+      "enum": [
+        "EXACT",
+        "METER_10",
+        "METER_100",
+        "GRID",
+        "GEOHASH",
+        "CITY",
+        "REGION",
+        "COUNTRY",
+        "NONE"
+      ],
+      "title": "Precision",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "operation": {
+      "const": "EgressSinkVerify",
+      "default": "EgressSinkVerify",
+      "title": "Operation",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/Decision"
+    },
+    "verification": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Verification",
+      "type": "object"
+    },
+    "authority_id": {
+      "title": "Authority Id",
+      "type": "string"
+    },
+    "consumed": {
+      "default": false,
+      "title": "Consumed",
+      "type": "boolean"
+    },
+    "released_precision": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Precision"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "release_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Release Id"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "error_message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Message"
+    }
+  },
+  "required": [
+    "request_id",
+    "decision",
+    "verification",
+    "authority_id"
+  ],
+  "title": "SinkResult",
+  "type": "object"
+}

@@ -1,0 +1,103 @@
+{
+  "scenario": "emergency",
+  "policy_decision": {
+    "version": "1.0",
+    "object_type": "precision_policy_decision",
+    "decision_id": "ppd-e4835220da2f2de1",
+    "candidate_act_id": "loc-4aed635256ad9eda36f306d4",
+    "decision": "ALLOW",
+    "requested_precision": "EXACT",
+    "authorized_precision": "EXACT",
+    "transformation": null,
+    "validated_predicates": {
+      "application_valid": true,
+      "component_valid": true,
+      "purpose_valid": true,
+      "destination_valid": true,
+      "recipient_valid": true,
+      "jurisdiction_valid": true,
+      "user_authorization_valid": true,
+      "policy_epoch_valid": true,
+      "revocation_state_valid": true,
+      "cumulative_disclosure_acceptable": true,
+      "sink_binding_valid": true
+    },
+    "reason_codes": [
+      "REQUEST_WITHIN_POLICY"
+    ]
+  },
+  "authority": {
+    "version": "1.0",
+    "object_type": "egress_finality_authority",
+    "authority_id": "efa-68c7f2e6e1496e8f",
+    "candidate_act_id": "loc-4aed635256ad9eda36f306d4",
+    "decision_id": "ppd-e4835220da2f2de1",
+    "evidence_id": "pve-location-580ce31ccf6e2e7e",
+    "scope": {
+      "data_class": "LOCATION",
+      "authorized_precision": "EXACT",
+      "permitted_fields": [
+        "latitude",
+        "longitude",
+        "accuracy_meters"
+      ],
+      "recipient_id": "service-provider",
+      "destination_id": "service.example",
+      "jurisdiction": "IN",
+      "retention_seconds_max": 300,
+      "transformation_method": null
+    },
+    "binding": {
+      "candidate_act_digest": "dQ-1C-jWTRLdudf5eElsQERvIUtp3_d7yTnGuzamPtI",
+      "evidence_digest": "MWdDFk8NlrdSNQfrp6eocVSJ0Ph6UnoBY_QC--fBFXU",
+      "nonce": "c7ddce9ba98efdf5304eac7d3b016ce5",
+      "sequence": 1,
+      "policy_epoch": 42,
+      "authority_epoch": 11,
+      "revocation_epoch": 7,
+      "finality_sink_id": "egress-sink-01",
+      "protected_state_reference": "ped-location-state-399f97afa4b5f549",
+      "activation_commitment": "7oc4ibk95-cZnuyYu9K5HOuIHDlIyjPBeIdu28nh8Dk"
+    },
+    "lifetime": {
+      "issued_at": "2026-09-08T11:07:24.226605Z",
+      "expires_at": "2026-09-08T11:07:34.226605Z",
+      "single_use": true
+    },
+    "issuer": {
+      "ped_id": "ped-device-01",
+      "key_id": "ped-ed25519-1",
+      "algorithm": "Ed25519",
+      "signature": "qowsPuqsafjGNnXs-QP2QxM1CH6fgVvLUov2o2O689aHo4xceFsuwXSrjw5XOUVmkvCFlHaQ_2NY7APNfAC7BQ"
+    }
+  },
+  "payload": {
+    "latitude": 21.494321,
+    "longitude": 86.932145,
+    "accuracy_meters": 4.2
+  },
+  "sink_result": {
+    "operation": "EgressSinkVerify",
+    "request_id": "egress-1d2e2ef551a7bc8f",
+    "decision": "ALLOW",
+    "verification": {
+      "authority_signature": "VALID",
+      "candidate_act_binding": "MATCH",
+      "protected_evidence": "MATCH",
+      "activation_state": "ACTIVE",
+      "epochs": "CURRENT",
+      "sink_binding": "MATCH",
+      "nonce": "FRESH",
+      "destination": "MATCH",
+      "jurisdiction": "MATCH",
+      "payload_precision": "EXACT_WITHIN_EXACT",
+      "consumption_state": "CONSUMED"
+    },
+    "authority_id": "efa-68c7f2e6e1496e8f",
+    "consumed": true,
+    "released_precision": "EXACT",
+    "release_id": "release-ed27c63f7c82abf5",
+    "error_code": null,
+    "error_message": null
+  }
+}

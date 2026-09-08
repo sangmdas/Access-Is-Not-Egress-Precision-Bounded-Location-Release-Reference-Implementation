@@ -1,0 +1,130 @@
+{
+  "$defs": {
+    "Decision": {
+      "enum": [
+        "ALLOW",
+        "ALLOW_WITH_TRANSFORMATION",
+        "DELAY",
+        "RANDOMIZE",
+        "ESCALATE",
+        "DENY"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "Precision": {
+      "enum": [
+        "EXACT",
+        "METER_10",
+        "METER_100",
+        "GRID",
+        "GEOHASH",
+        "CITY",
+        "REGION",
+        "COUNTRY",
+        "NONE"
+      ],
+      "title": "Precision",
+      "type": "string"
+    },
+    "TransformType": {
+      "enum": [
+        "NONE",
+        "PRECISION_REDUCTION",
+        "RANDOMIZATION",
+        "DELAY"
+      ],
+      "title": "TransformType",
+      "type": "string"
+    },
+    "Transformation": {
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/TransformType"
+        },
+        "method": {
+          "title": "Method",
+          "type": "string"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        }
+      },
+      "required": [
+        "type",
+        "method"
+      ],
+      "title": "Transformation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "object_type": {
+      "const": "precision_policy_decision",
+      "default": "precision_policy_decision",
+      "title": "Object Type",
+      "type": "string"
+    },
+    "decision_id": {
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "candidate_act_id": {
+      "title": "Candidate Act Id",
+      "type": "string"
+    },
+    "decision": {
+      "$ref": "#/$defs/Decision"
+    },
+    "requested_precision": {
+      "$ref": "#/$defs/Precision"
+    },
+    "authorized_precision": {
+      "$ref": "#/$defs/Precision"
+    },
+    "transformation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Transformation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "validated_predicates": {
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "title": "Validated Predicates",
+      "type": "object"
+    },
+    "reason_codes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reason Codes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision_id",
+    "candidate_act_id",
+    "decision",
+    "requested_precision",
+    "authorized_precision"
+  ],
+  "title": "PrecisionDecision",
+  "type": "object"
+}
